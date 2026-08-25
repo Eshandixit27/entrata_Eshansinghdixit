@@ -1,0 +1,13 @@
+{
+  "name": "resilient-csv-parser",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node serve.mjs",
+    "demo": "node src/cli.js samples/sample.csv",
+    "parse": "node src/cli.js",
+    "test": "node --test",
+    "check": "node --check serve.mjs && node --check src/csv/csvParser.js && node --check src/cli.js && node --check src/app.js"
+  }
+}

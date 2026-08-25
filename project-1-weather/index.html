@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A responsive current weather dashboard." />
+    <title>Atmos - Weather Dashboard</title>
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="weather" aria-labelledby="weather-heading">
+        <div class="hero-image" aria-hidden="true"></div>
+        <div class="weather-content">
+          <header class="masthead">
+            <p class="eyebrow">Weather desk</p>
+            <h1 id="weather-heading">Atmos</h1>
+            <p class="intro">Current conditions, clearly presented.</p>
+          </header>
+
+          <form id="weather-form" class="search-form" novalidate>
+            <label for="city-input">City</label>
+            <div class="search-row">
+              <input id="city-input" name="city" type="search" autocomplete="address-level2" placeholder="Search a city" maxlength="100" required />
+              <button type="submit" class="primary-button"><span aria-hidden="true">Search</span></button>
+            </div>
+            <p id="validation-message" class="field-message" aria-live="polite"></p>
+          </form>
+
+          <div class="toolbar" aria-label="Weather settings">
+            <div class="unit-control" aria-label="Temperature unit">
+              <button type="button" data-unit="celsius" aria-pressed="true">C</button>
+              <button type="button" data-unit="fahrenheit" aria-pressed="false">F</button>
+            </div>
+            <p id="updated-at" class="updated-at"></p>
+          </div>
+
+          <section id="weather-status" class="status" aria-live="polite" aria-atomic="true">
+            <p>Search for a city to see its current conditions.</p>
+          </section>
+
+          <section id="weather-result" class="weather-result" hidden aria-live="polite">
+            <div class="location-row">
+              <div>
+                <p class="eyebrow">Now in</p>
+                <h2 id="weather-city"></h2>
+              </div>
+              <button id="favorite-button" class="icon-button" type="button" aria-label="Add city to favorites" title="Add city to favorites">☆</button>
+            </div>
+            <div class="temperature-row">
+              <span id="weather-symbol" class="weather-symbol" aria-hidden="true"></span>
+              <p><strong id="weather-temperature"></strong><span id="temperature-unit"></span></p>
+              <span id="weather-condition" class="condition"></span>
+            </div>
+            <dl class="metrics">
+              <div><dt>Humidity</dt><dd id="weather-humidity"></dd></div>
+              <div><dt>Wind</dt><dd id="weather-wind"></dd></div>
+              <div><dt>Feels like</dt><dd id="weather-apparent"></dd></div>
+            </dl>
+            <aside id="weather-tip" class="weather-tip" aria-label="Today's weather tip"></aside>
+          </section>
+
+          <div class="saved-lists">
+            <section aria-labelledby="favorites-heading">
+              <h2 id="favorites-heading">Favorites</h2>
+              <div id="favorites" class="city-list"><p class="empty-list">No saved cities.</p></div>
+            </section>
+            <section aria-labelledby="recent-heading">
+              <h2 id="recent-heading">Recent searches</h2>
+              <div id="recents" class="city-list"><p class="empty-list">No searches yet.</p></div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+    </main>
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>

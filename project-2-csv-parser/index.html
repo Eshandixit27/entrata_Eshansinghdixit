@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A resilient CSV parser that keeps valid records and reports row-level errors." />
+    <title>ClearRows - CSV Parser</title>
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <div class="paper-image" aria-hidden="true"></div>
+        <div class="brand-mark" aria-hidden="true">CR</div>
+        <p class="eyebrow">Data quality workspace</p>
+        <h1>ClearRows<span>.</span></h1>
+        <p>Turn raw CSV into dependable data. Valid records stay visible while every issue is easy to trace.</p>
+        <div class="hero-pills" aria-label="Features"><span>Quote-aware</span><span>Row-level issues</span><span>Browser-only</span></div>
+      </header>
+
+      <section class="workspace" aria-labelledby="input-heading">
+        <div class="section-heading">
+          <div><p class="eyebrow">Source data</p><h2 id="input-heading">CSV input</h2></div>
+          <button id="load-sample" type="button" class="text-button">Load sample</button>
+        </div>
+        <label for="csv-input">Paste CSV content</label>
+        <textarea id="csv-input" rows="12" spellcheck="false" aria-describedby="input-help">name,email,age
+Eshan,eshan@example.com,22
+Mira,mira@example.com
+Ravi,"Pune, Maharashtra",31</textarea>
+        <p id="input-help" class="hint">Quoted commas and multiline quoted fields are supported.</p>
+        <div class="actions">
+          <label class="file-button" for="csv-file"><span aria-hidden="true">&uarr;</span> Choose CSV file</label>
+          <input id="csv-file" type="file" accept=".csv,text/csv" />
+          <button id="parse-csv" type="button" class="primary-button">Parse CSV</button>
+        </div>
+        <p id="file-message" class="hint" aria-live="polite"></p>
+      </section>
+
+      <section class="results" aria-labelledby="results-heading" aria-live="polite">
+        <div class="section-heading"><div><p class="eyebrow">Parse result</p><h2 id="results-heading">Results</h2></div><p id="summary" class="summary">Ready to parse.</p></div>
+        <div id="stats" class="stats" aria-label="Parse statistics"></div>
+        <div class="result-grid">
+          <section class="records-panel" aria-labelledby="records-heading">
+            <div class="panel-heading">
+              <div><p class="panel-kicker">Clean data</p><h3 id="records-heading">Valid records</h3></div>
+              <div class="record-actions">
+                <label class="search-records" for="record-search"><span aria-hidden="true">&#8981;</span><input id="record-search" type="search" placeholder="Filter records" /></label>
+                <button id="download-csv" type="button" class="download-button" disabled>Export CSV</button>
+              </div>
+            </div>
+            <div id="records-output" class="table-wrap"><p class="empty-state">Parse CSV to see valid records.</p></div>
+          </section>
+          <section class="errors-panel" aria-labelledby="errors-heading">
+            <p class="panel-kicker">Needs attention</p><h3 id="errors-heading">Issues</h3>
+            <div id="errors-output"><p class="empty-state">No parse results yet.</p></div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>
