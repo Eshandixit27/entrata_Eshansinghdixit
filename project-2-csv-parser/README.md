@@ -36,16 +36,17 @@ npm run check
 - An unclosed quote produces `MALFORMED_QUOTE`, rather than throwing.
 - Blank cells are accepted as values; blank rows are ignored.
 
-The parser separates tokenization from record validation in `src/csv/csvParser.js`, returning `{ headers, records, errors }`.
+The frontend sends CSV to `POST /api/parse` through `src/csvApi.js`. The backend in `backend/server.mjs` validates the request and calls the parser in `src/csv/csvParser.js`, returning `{ headers, records, errors }`.
 
 ## Architecture
 
 ```text
-CSV input
-  -> tokenizer (quote-aware rows and fields)
-  -> record validation (headers and field counts)
+Frontend (src/app.js + src/csvApi.js)
+  -> POST /api/parse
+Backend (backend/server.mjs)
+  -> tokenizer + record validation (src/csv/csvParser.js)
   -> structured { headers, records, errors }
-  -> CLI JSON output
+  -> browser UI or CLI JSON output
 ```
 
 `src/cli.js` is only responsible for file input and output. `src/csv/csvParser.js` contains parsing and validation behavior, keeping it independently testable.

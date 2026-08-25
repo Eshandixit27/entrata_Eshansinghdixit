@@ -1,4 +1,4 @@
-import { parseCsv } from "./csv/csvParser.js";
+import { parseCsvRequest } from "./csvApi.js";
 
 const sample = `name,email,age
 Eshan,eshan@example.com,22
@@ -37,8 +37,10 @@ function renderErrors(errors) {
   errorsOutput.append(list);
 }
 
-function render() {
-  const result = parseCsv(input.value);
+async function render() {
+  let result;
+  try { result = await parseCsvRequest(input.value); }
+  catch (error) { fileMessage.textContent = error.message; return; }
   latestResult = result;
   summary.textContent = `${result.records.length} valid record${result.records.length === 1 ? "" : "s"} and ${result.errors.length} issue${result.errors.length === 1 ? "" : "s"}.`;
   stats.replaceChildren(...[

@@ -1,8 +1,7 @@
-import { validateCity, ValidationError, formatTemperature } from "./domain/weather.js";
-import { OpenMeteoWeatherClient, WeatherServiceError } from "./services/weatherClient.js";
+import { validateCity, formatTemperature } from "./domain/weather.js";
+import { getCurrentWeather, WeatherApiError } from "./weatherApi.js";
 import { cityStorage } from "./storage.js";
 
-const client = new OpenMeteoWeatherClient();
 const elements = {
   form: document.querySelector("#weather-form"), input: document.querySelector("#city-input"), validation: document.querySelector("#validation-message"),
   status: document.querySelector("#weather-status"), result: document.querySelector("#weather-result"), city: document.querySelector("#weather-city"),
@@ -73,11 +72,11 @@ async function search(rawCity) {
   elements.result.hidden = true;
   setStatus("Fetching weather...", "loading");
   try {
-    const weather = await client.getCurrentWeather(city, activeUnit);
+    const weather = await getCurrentWeather(city, activeUnit);
     cityStorage.addRecent(weather.city);
     renderWeather(weather); renderSavedLists();
   } catch (error) {
-    const message = error instanceof WeatherServiceError ? error.message : "Unable to fetch weather information right now. Please try again.";
+    const message = error instanceof WeatherApiError ? error.message : "Unable to fetch weather information right now. Please try again.";
     setStatus(`${message} <button type="button" class="inline-retry">Retry</button>`, "error");
     elements.status.querySelector("button").addEventListener("click", () => search(city));
   }
