@@ -1,64 +1,147 @@
-# Project 2 - Resilient CSV Parser
+# Project 2 - ClearRows: Resilient CSV Parser
 
-This command-line utility parses CSV into structured records and errors. A malformed record never crashes the full parse or discards valid records from other rows.
+ClearRows is a fault-tolerant CSV parsing tool with both a browser workspace and a command-line interface. It separates valid records from malformed rows so a single broken line never prevents the rest of a file from being used. The web UI makes data quality easy to inspect with row-level issues, search, summary statistics, and clean-record export.
 
-## Run the web interface
+## Highlights
+
+- Parse pasted CSV content or upload a local CSV file up to 1 MB.
+- Keep valid records even when other rows contain missing fields, extra fields, or malformed quotes.
+- Support quoted commas, escaped quotes, and multiline quoted fields.
+- Report structured errors with row number, error type, and readable remediation detail.
+- Filter valid records in the browser and export only clean rows as a new CSV file.
+- Reuse the same parsing engine in the browser API and CLI workflow.
+
+## Technology stack
+
+| Area | Technology | Purpose |
+| --- | --- | --- |
+| Frontend | HTML5, CSS3, browser JavaScript modules | CSV workspace, file input, tables, filtering, export |
+| Backend | Node.js built-in `http`, `fs`, and `path` modules | JSON parsing API and static frontend delivery |
+| Parser | Custom quote-aware JavaScript tokenizer | Safe CSV tokenization and record validation without dependencies |
+| CLI | Node.js `fs/promises` | Parse a user-provided local CSV file and print JSON |
+| Testing | Node.js built-in test runner | Parser edge-case coverage |
+
+The project intentionally has no third-party runtime dependencies.
+
+## Project structure
+
+```text
+project-2-csv-parser/
+├── frontend/
+│   ├── index.html                 # Application structure and accessible controls
+│   ├── public/images/             # Decorative interface artwork
+│   └── src/
+│       ├── app.js                 # Render state, upload, filtering, and export
+│       ├── csvApi.js              # Client for POST /api/parse
+│       └── styles.css             # Responsive workspace design
+├── backend/
+│   ├── server.mjs                 # HTTP routes, request-size limit, static files
+│   ├── cli.js                     # File-to-JSON command-line adapter
+│   └── csv/csvParser.js           # Tokenizer, validation, and result contract
+├── samples/                       # Demonstration and edge-case CSV files
+├── tests/csvParser.test.js        # Parser unit tests
+├── serve.mjs                      # Application startup entry point
+└── package.json
+```
+
+## Architecture
+
+```text
+Browser UI / CLI
+  -> frontend/src/csvApi.js or backend/cli.js
+  -> POST /api/parse or direct parser call
+  -> backend/csv/csvParser.js
+      -> quote-aware tokenization
+      -> header validation
+      -> field-count validation
+  -> { headers, records, errors }
+  -> valid-record table + row-level issue list / CLI JSON
+```
+
+The parser does not depend on UI code, HTTP code, or filesystem code. This keeps it deterministic, reusable, and straightforward to test.
+
+## Parsing behavior
+
+| Input condition | Result |
+| --- | --- |
+| Quoted comma | Preserved as part of one field |
+| Escaped quote (`""`) | Decoded as a single quote character |
+| Multiline quoted field | Preserved as one field across lines |
+| Missing columns | Row excluded from `records`; `MISSING_COLUMNS` error returned |
+| Extra columns | Row excluded from `records`; `EXTRA_COLUMNS` error returned |
+| Unclosed or invalid quote | `MALFORMED_QUOTE` error returned without a crash |
+| Empty CSV input | `EMPTY_INPUT` error returned |
+| Duplicate header | `DUPLICATE_HEADER` error returned because keys would be ambiguous |
+| Blank cell | Retained as a valid empty value |
+| Blank row | Ignored |
+
+## API contract
+
+### `POST /api/parse`
+
+Request body:
+
+```json
+{ "csv": "name,email\nEshan,eshan@example.com" }
+```
+
+Successful response:
+
+```json
+{
+  "headers": ["name", "email"],
+  "records": [{ "name": "Eshan", "email": "eshan@example.com" }],
+  "errors": []
+}
+```
+
+The server accepts JSON only and limits the request body to 1 MB. Invalid JSON, non-text CSV values, and oversized bodies return a safe HTTP 400 response with a `message` field.
+
+## Run locally
+
+Requirements: Node.js 18 or later.
+
+### Web workspace
 
 ```bash
+cd project-2-csv-parser
 npm start
 ```
 
-Open `http://127.0.0.1:4174`. Paste CSV, load the provided sample, or choose a CSV file under 1 MB. The page shows valid records in a table and parser issues as row-specific messages.
+Open http://127.0.0.1:4174.
 
-## Run the CLI sample
+### CLI sample
 
 ```bash
 npm run demo
 ```
 
-## Parse your own file
+### Parse your own file
 
 ```bash
 npm run parse -- path/to/input.csv
 ```
 
-## Test
+The CLI prints the same structured result used by the API.
+
+## Test and validate
 
 ```bash
 npm test
 npm run check
 ```
 
-## Behavior
+Tests cover valid records, quoted commas, missing columns, extra columns, unclosed quotes, and multiline quoted values. `npm run check` verifies syntax for the frontend client, backend server, parser, and CLI.
 
-- Quoted commas, escaped quotes, and multiline quoted cells are supported.
-- Missing and extra columns produce a row number and readable message.
-- An unclosed quote produces `MALFORMED_QUOTE`, rather than throwing.
-- Blank cells are accepted as values; blank rows are ignored.
+## Security and reliability
 
-The frontend sends CSV to `POST /api/parse` through `frontend/src/csvApi.js`. The backend in `backend/server.mjs` validates the request and calls the parser in `backend/csv/csvParser.js`, returning `{ headers, records, errors }`.
+- The parser treats CSV as data only; it never evaluates cell content as code.
+- Browser rendering uses DOM text nodes for CSV values and issue text, avoiding HTML injection.
+- The backend limits API request bodies to 1 MB and reports safe validation messages.
+- Static-file serving rejects path traversal attempts and unsupported HTTP methods.
+- The CLI reads only the explicit user-provided file path and returns generic read errors rather than internal filesystem details.
+- A malformed row cannot throw an uncaught parser error or discard independent valid rows.
 
-## Architecture
+## Trade-offs and future improvements
 
-```text
-Frontend (frontend/src/app.js + frontend/src/csvApi.js)
-  -> POST /api/parse
-Backend (backend/server.mjs)
-  -> tokenizer + record validation (backend/csv/csvParser.js)
-  -> structured { headers, records, errors }
-  -> browser UI or CLI JSON output
-```
-
-`src/cli.js` is only responsible for file input and output. `src/csv/csvParser.js` contains parsing and validation behavior, keeping it independently testable.
-
-## Error handling and decisions
-
-- Missing and extra fields produce a row-specific error; valid rows remain in `records`.
-- Quoted commas, escaped quotes, and quoted multiline fields are valid CSV content.
-- An unclosed quote or unexpected content after a closing quote becomes `MALFORMED_QUOTE`, never an uncaught exception.
-- Blank cells are deliberately valid; absent fields are not.
-- Duplicate headers are rejected because they would make normalized record keys ambiguous.
-
-## Security and trade-offs
-
-The CLI reads the file path explicitly provided by the local user and does not execute or evaluate CSV content. It prints a safe, generic read error rather than an internal filesystem error. The parser reports an unclosed quote as an invalid remainder rather than attempting ambiguous recovery; a production ingestion system could add configurable recovery policies and streaming support for very large files.
+ClearRows processes complete input in memory, which is the right trade-off for the current 1 MB UI limit and keeps the code simple. A production ingestion pipeline could add streaming support for large files, configurable required-column rules, delimiter selection, schema/type validation, error-file downloads, authentication, audit trails, and background jobs for long-running imports.
