@@ -1,4 +1,4 @@
-import { validateCity, formatTemperature } from "./domain/weather.js";
+import { validateCity, formatTemperature } from "./weatherUtils.js";
 import { getCurrentWeather, WeatherApiError } from "./weatherApi.js";
 import { cityStorage } from "./storage.js";
 

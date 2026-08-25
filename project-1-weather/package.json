@@ -6,6 +6,6 @@
   "scripts": {
     "start": "node serve.mjs",
     "test": "node --test",
-    "check": "node --check serve.mjs && node --check backend/server.mjs && node --check src/app.js && node --check src/weatherApi.js && node --check src/services/weatherClient.js"
+    "check": "node --check serve.mjs && node --check backend/server.mjs && node --check frontend/src/app.js && node --check frontend/src/weatherApi.js && node --check backend/services/weatherClient.js"
   }
 }

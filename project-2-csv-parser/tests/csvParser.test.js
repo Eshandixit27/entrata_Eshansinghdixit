@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CsvErrorType, parseCsv } from "../src/csv/csvParser.js";
+import { CsvErrorType, parseCsv } from "../backend/csv/csvParser.js";
 
 test("parses valid records and quoted commas", () => {
   const result = parseCsv('name,location,age\nEshan,"Pune, Maharashtra",22');

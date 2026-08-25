@@ -2,10 +2,10 @@ import { createReadStream, existsSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, isAbsolute, join, normalize, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { validateCity, ValidationError } from "../src/domain/weather.js";
-import { OpenMeteoWeatherClient, WeatherServiceError } from "../src/services/weatherClient.js";
+import { validateCity, ValidationError } from "./domain/weather.js";
+import { OpenMeteoWeatherClient, WeatherServiceError } from "./services/weatherClient.js";
 
-const root = normalize(join(fileURLToPath(new URL("..", import.meta.url))));
+const root = normalize(join(fileURLToPath(new URL("..", import.meta.url)), "frontend"));
 const client = new OpenMeteoWeatherClient();
 const types = { ".css": "text/css", ".html": "text/html", ".js": "text/javascript", ".png": "image/png" };
 

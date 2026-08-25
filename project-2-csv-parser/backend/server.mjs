@@ -2,9 +2,9 @@ import { createReadStream, existsSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, isAbsolute, join, normalize, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { parseCsv } from "../src/csv/csvParser.js";
+import { parseCsv } from "./csv/csvParser.js";
 
-const root = normalize(join(fileURLToPath(new URL("..", import.meta.url))));
+const root = normalize(join(fileURLToPath(new URL("..", import.meta.url)), "frontend"));
 const types = { ".css": "text/css", ".html": "text/html", ".js": "text/javascript", ".png": "image/png" };
 
 function sendJson(response, status, body) {

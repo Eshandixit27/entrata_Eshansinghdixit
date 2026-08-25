@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "start": "node serve.mjs",
-    "demo": "node src/cli.js samples/sample.csv",
-    "parse": "node src/cli.js",
+    "demo": "node backend/cli.js samples/sample.csv",
+    "parse": "node backend/cli.js",
     "test": "node --test",
-    "check": "node --check serve.mjs && node --check backend/server.mjs && node --check src/csv/csvParser.js && node --check src/csvApi.js && node --check src/cli.js && node --check src/app.js"
+    "check": "node --check serve.mjs && node --check backend/server.mjs && node --check backend/csv/csvParser.js && node --check frontend/src/csvApi.js && node --check backend/cli.js && node --check frontend/src/app.js"
   }
 }

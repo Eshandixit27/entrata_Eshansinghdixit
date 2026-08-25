@@ -23,14 +23,14 @@ npm run check
 ## Architecture
 
 ```text
-Frontend (src/app.js + src/weatherApi.js)
+Frontend (frontend/src/app.js + frontend/src/weatherApi.js)
   -> GET /api/weather
 Backend (backend/server.mjs)
-  -> validation + Open-Meteo client (src/services/weatherClient.js)
+  -> validation + Open-Meteo client (backend/services/weatherClient.js)
   -> public weather APIs
 ```
 
-`src/storage.js` owns browser-local favorites and recent searches. `backend/server.mjs` owns the HTTP API and static file delivery; `serve.mjs` is the small startup entry point.
+`frontend/src/storage.js` owns browser-local favorites and recent searches. `backend/server.mjs` owns the HTTP API and static file delivery; `serve.mjs` is the small startup entry point.
 
 ## Design decisions
 

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { validateCity, ValidationError } from "../src/domain/weather.js";
-import { OpenMeteoWeatherClient, WeatherServiceError } from "../src/services/weatherClient.js";
+import { validateCity, ValidationError } from "../backend/domain/weather.js";
+import { OpenMeteoWeatherClient, WeatherServiceError } from "../backend/services/weatherClient.js";
 
 test("normalizes a valid city", () => assert.equal(validateCity("  Pune  "), "Pune"));
 test("rejects empty and unsafe city input", () => {
